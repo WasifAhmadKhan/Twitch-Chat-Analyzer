@@ -8,6 +8,7 @@ export default class Poll extends Component {
             height: "350px",
             width: "400px",
             overflow: "scroll",
+            backgroundColor : "grey"
         }
         return (
             <div>

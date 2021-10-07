@@ -4,7 +4,7 @@ import Poll from './component/Poll';
 const tmi = require('tmi.js');
 export default class Twich extends Component {
     client = new tmi.Client();
-    
+
     constructor() {
         super();
 
@@ -12,25 +12,35 @@ export default class Twich extends Component {
         this.state = {
             msg: [],
             startpoll: false,
-            channel:"",
-            msgCount : {},
+            channel: "",
+            msgCount: {},
+            subscriber: false,
+            userCount: {},
         }
     }
     startFetch = async () => {
-        this.client.channels=[this.state.channel];
+        this.client.channels = [this.state.channel];
         this.client.connect();
         this.client.on('message', (channel, tags, message, self) => {
-            
+            typeof this.state.userCount[tags['display-name']] === 'undefined' ?this.state.userCount[tags['display-name']] = 1 : this.state.userCount[tags['display-name']]++;
             this.setState(
                 {
                     msg: [...this.state.msg, { body: message, tgs: tags }],
 
                 }
             )
-            if(this.state.startpoll){
-                typeof this.state.msgCount[message] === 'undefined' ? this.state.msgCount[message] = 1 : this.state.msgCount[message]++;
+            //console.log(tags);
+            //console.log(this.state.userCount);
+            if (this.state.startpoll) {
+                if(this.state.subscriber===true){
+                    if(tags['subscriber']===true){
+                        typeof this.state.msgCount[message] === 'undefined' ? this.state.msgCount[message] = 1 : this.state.msgCount[message]++;
+                    }
+                }else{
+                    typeof this.state.msgCount[message] === 'undefined' ? this.state.msgCount[message] = 1 : this.state.msgCount[message]++;
+                }
             }
-         
+
         });
     }
     stopFetch = async () => {
@@ -43,31 +53,51 @@ export default class Twich extends Component {
             }
         )
     }
-    startPoll = async()=>{
-        
+    startPoll = async () => {
+
         this.setState(
             {
-                startpoll:true,
+                startpoll: true,
             }
         )
     }
-    stoptPoll = async()=>{
+    stoptPoll = async () => {
         this.setState(
             {
-                startpoll:false,
+                startpoll: false,
             }
         )
     }
-    resetPoll = async()=>{
-        this.state.msgCount={};
+    resetPoll = async () => {
+        this.state.msgCount = {};
     }
-    handleChange = async(event)=>{
+    handleChange = async (event) => {
         this.setState(
             {
-                channel:event.target.value,
+                channel: event.target.value,
             }
         )
 
+    }
+    toggleSub = async()=>{
+        if(this.state.subscriber===false){
+            this.setState(
+                {
+                    subscriber:true,
+                    msg:[]
+                }
+            )
+            this.state.msgCount={};
+        }
+        else{
+            this.setState(
+                {
+                    subscriber:false,
+                    msg:[]
+                }
+            )
+            this.state.msgCount={};
+        }
     }
     componentDidUpdate() {
         this.node.scrollTop = this.node.scrollHeight;
@@ -77,25 +107,34 @@ export default class Twich extends Component {
             height: "350px",
             width: "400px",
             overflow: "scroll",
+            backgroundColor: "grey",
+
+
         }
 
         return (
             <div>
-                <input className="form-control my-2 mx-3" type="search" placeholder="Search" aria-label="Search" onChange={this.handleChange} style={{width:"200px"}}/>
-                <button disabled={this.state.channel===""?true:false} type="button" className="btn btn-dark mx-3 " onClick={this.startFetch}>Start</button>
-                <button disabled={this.state.channel!==""?false:true} type="button" className="btn btn-dark" onClick={this.stopFetch}>Stop</button>
+                <input className="form-control my-2 mx-3" type="search" placeholder="Search" aria-label="Search" onChange={this.handleChange} style={{ width: "200px" }} />
+                <button disabled={this.state.channel === "" ? true : false} type="button" className="btn btn-dark mx-3 " onClick={this.startFetch}>Start</button>
+                <button disabled={this.state.channel !== "" ? false : true} type="button" className="btn btn-dark" onClick={this.stopFetch}>Stop</button>
+                <div className="form-check form-switch my-2 mx-3">
+                    <input className="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onChange={this.toggleSub}/>
+                    <label className ="form-check-label text-light" htmlFor="flexSwitchCheckDefault" >{this.state.subscriber?"Disable Subscriber Only":"Enable Subscriber Only"}</label>
+                </div>
+                <div className="container  mb-2 ">
+                                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                                <button disabled={this.state.startpoll || this.state.channel === ""} type="button" className="btn btn-dark" onClick={this.startPoll}>Start Poll</button>&nbsp
+                                <button disabled={!this.state.startpoll || this.state.channel === ""} type="button" className="btn btn-dark" onClick={this.stoptPoll}>Stop Poll</button>&nbsp
+                                <button type="button" className="btn btn-dark" onClick={this.resetPoll}>Reset Poll</button>
+                </div>
                 <div className="container my-3 mx-3 " >
                     <div className="row" >
                         <ul className="col-md-4 card list-group" ref={(node) => (this.node = node)} style={mystyle}>
-                            <Chat msg={this.state.msg} />
+                            <Chat msg={this.state.msg} subscriber={this.state.subscriber} />
                         </ul>
-                        <div className="col-md-4 " style={{ top: "-50px" }}>
-                            <div className="row my-2" >
-                                <div className="col"><button disabled={this.state.startpoll||this.state.channel===""} type="button" className="btn btn-dark   " onClick={this.startPoll}>Start Poll</button></div>
-                                <div className="col"><button disabled={!this.state.startpoll||this.state.channel===""} type="button" className="btn btn-dark" onClick={this.stoptPoll}>Stop Poll</button></div>
-                                <div className="col"><button type="button" className="btn btn-dark" onClick={this.resetPoll}>Reset Poll</button></div>
-                            </div>
-                            <Poll  msgCount={this.state.msgCount} />
+                        <div className="col-md-4 " >
+                            
+                            <Poll msgCount={this.state.msgCount} />
                         </div>
                     </div>
 
