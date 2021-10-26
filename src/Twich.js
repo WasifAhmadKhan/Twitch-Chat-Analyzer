@@ -124,10 +124,11 @@ export default class Twich extends Component {
                     <label className ="form-check-label text-light" htmlFor="flexSwitchCheckDefault" >{this.state.subscriber?"Disable Subscriber Only":"Enable Subscriber Only"}</label>
                 </div>
                 <div className="container  mb-2 ">
-                                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                                 <button disabled={this.state.startpoll || this.state.channel === ""} type="button" className="btn btn-dark" onClick={this.startPoll}>Start Poll</button>&nbsp
                                 <button disabled={!this.state.startpoll || this.state.channel === ""} type="button" className="btn btn-dark" onClick={this.stoptPoll}>Stop Poll</button>&nbsp
-                                <button type="button" className="btn btn-dark" onClick={this.resetPoll}>Reset Poll</button>&nbsp&nbsp&nbsp
+                                <button type="button" className="btn btn-dark" onClick={this.resetPoll}>Reset Poll</button> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                                 <b className ="form-check-label text-light"> Most active user</b>
                 </div>
                 <div className="container my-3 mx-3 " >
