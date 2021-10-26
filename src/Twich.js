@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Chat from './component/Chat';
 import Poll from './component/Poll';
+import Users from './component/Users';
 const tmi = require('tmi.js');
 export default class Twich extends Component {
     client = new tmi.Client();
@@ -47,6 +48,7 @@ export default class Twich extends Component {
 
         this.client.disconnect();
         this.state.msgCount = {};
+        this.state.userCount = {};
         this.setState(
             {
                 msg: [],
@@ -125,7 +127,8 @@ export default class Twich extends Component {
                                 &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
                                 <button disabled={this.state.startpoll || this.state.channel === ""} type="button" className="btn btn-dark" onClick={this.startPoll}>Start Poll</button>&nbsp
                                 <button disabled={!this.state.startpoll || this.state.channel === ""} type="button" className="btn btn-dark" onClick={this.stoptPoll}>Stop Poll</button>&nbsp
-                                <button type="button" className="btn btn-dark" onClick={this.resetPoll}>Reset Poll</button>
+                                <button type="button" className="btn btn-dark" onClick={this.resetPoll}>Reset Poll</button>&nbsp&nbsp&nbsp
+                                <b className ="form-check-label text-light"> Most active user</b>
                 </div>
                 <div className="container my-3 mx-3 " >
                     <div className="row" >
@@ -135,6 +138,9 @@ export default class Twich extends Component {
                         <div className="col-md-4 " >
                             
                             <Poll msgCount={this.state.msgCount} />
+                        </div>
+                        <div className="col-md-3 mx-4 " >
+                            <Users userCount={this.state.userCount} />
                         </div>
                     </div>
 
